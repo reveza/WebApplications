@@ -41,7 +41,7 @@
         {
             "Nom": "Michel",
             "Statut": "EnCours",
-            "DisponibilitÃ©s": [
+            "Disponibilité": [
                 0,
                 0,
                 0,
@@ -55,8 +55,8 @@
         },
         {
             "Nom": "Mathieu",
-            "Statut": "ComplÃ©tÃ©",
-            "DisponibilitÃ©s": [
+            "Statut": "Complété",
+            "Disponibilité": [
                 1,
                 1,
                 1,
@@ -70,8 +70,8 @@
         },
         {
             "Nom": "Kasra",
-            "Statut": "ComplÃ©tÃ©",
-            "DisponibilitÃ©s": [
+            "Statut": "Complété",
+            "Disponibilité": [
                 0,
                 0,
                 0,
@@ -85,8 +85,8 @@
         },
         {
             "Nom": "Audrey",
-            "Statut": "ComplÃ©tÃ©",
-            "DisponibilitÃ©s": [
+            "Statut": "Complété",
+            "Disponibilité": [
                 0,
                 1,
                 1,
@@ -100,8 +100,8 @@
         },
         {
             "Nom": "Antoine",
-            "Statut": "ComplÃ©tÃ©",
-            "DisponibilitÃ©s": [
+            "Statut": "Complété",
+            "Disponibilité": [
                 1,
                 1,
                 1,
@@ -115,8 +115,8 @@
         },
         {
             "Nom": "Michel",
-            "Statut": "ComplÃ©tÃ©",
-            "DisponibilitÃ©s": [
+            "Statut": "Complété",
+            "Disponibilité": [
                 1,
                 0,
                 1,
