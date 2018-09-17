@@ -67,11 +67,11 @@ function renderUserNumber() {
 }
 
 function renderEditing(div_name) {
-    div_name.style.color = "red";
+  div_name.style.color = "red";
 }
 
 function removeEditing(div_name) {
-    div_name.style.color = "black";
+  div_name.style.color = "black";
 }
 
 function renderUser(container) {
@@ -177,17 +177,16 @@ function renderChecksNumber(my_div, i) {
   my_div.appendChild(check_number);
 }
 
-function renderModal() {
-    setTimeout(function(){
-        console.log("allo");
-    },3000)
+function renderModal(id) {
+  setTimeout(function() {
+    document.getElementById(id).textContent = "#000000";
+  }, 3000);
 }
 
 function renderAvailability(my_div, user, i) {
   if (user.availability[i] === 1) {
     var div = document.createElement("div");
     div.classList.add("item");
-    div.addEventListener("mouseover", renderModal());
 
     var img = document.createElement("IMG");
     img.classList.add("icon");
@@ -202,6 +201,11 @@ function renderAvailability(my_div, user, i) {
     div.addEventListener("mouseover", renderModal());
 
     my_div.appendChild(div);
+
+    // var id = "item"+i;
+    // div.setAttribute("id", id);
+    // console.log(id);
+    // document.getElementById(id).addEventListener("mouseover", renderModal(id));
   }
 }
 
@@ -217,10 +221,10 @@ function renderInProgress(my_div, user, index) {
     checkButton("check" + index, "header" + index, "number" + index);
   };
 
-//   in_progress.addEventListener("click", function() {
-//       user.availability[index] = 1;
-//       update(model);
-//   })
+  //   in_progress.addEventListener("click", function() {
+  //       user.availability[index] = 1;
+  //       update(model);
+  //   })
   in_progress.appendChild(progress_img);
   my_div.appendChild(in_progress);
 }
@@ -236,9 +240,12 @@ function renderRow(my_div, i) {
 }
 
 function renderSchedule() {
-  var column = document.createElement("div");
+  //   var table = document.createElement("div");
+  //   table.setAttribute("id", "table");
+
   model.dates.map((d, index) => {
     var my_div = document.createElement("div");
+    my_div.setAttribute("id", "column" + index);
 
     var header = document.createElement("div");
     header.classList.add("header");
@@ -272,9 +279,41 @@ function renderSchedule() {
   });
 }
 
-function initView() {
+function renderTableView() {
   renderUsers();
   renderSchedule();
+}
+
+function renderTable() {
+  var container = document.getElementById("container");
+  if (container.style.display === "none") {
+    container.style.display = "block";
+    for (i = 0; i < 8; i++) {
+      var column = (document.getElementById("column" + i).style.display =
+        "block");
+    }
+    document.getElementById("calendar").style.display = "none";
+  }
+}
+
+function renderCalendarView() {
+  var div = document.createElement("div");
+  div.setAttribute("id", "calendar");
+  div.textContent = "Allo";
+  document.getElementById("wrapper").appendChild(div);
+}
+
+function renderCalendar() {
+  var container = document.getElementById("container");
+  container.style.display = "none";
+  for (i = 0; i < 9; i++) {
+    var column = (document.getElementById("column" + i).style.display = "none");
+  }
+  renderCalendarView();
+}
+
+async function initView() {
+  renderTableView();
 }
 
 function initModel() {
