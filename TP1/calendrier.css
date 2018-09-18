@@ -127,3 +127,33 @@
 .time {
     padding-bottom: 4px;
 }
+
+/* The Modal (background) */
+.modal {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Modal Content */
+.modal-content {
+    visibility: hidden;
+    width: 160px;
+    background-color: #fff;
+    color: black;
+    text-align: center;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -80px;
+}
+
+.modal_dates {
+    border-bottom: 1px solid lightgrey;
+}

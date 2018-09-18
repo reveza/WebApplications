@@ -66,12 +66,12 @@ function renderUserNumber() {
   });
 }
 
-function renderEditing(div_name) {
-  div_name.style.color = "red";
+function renderEditing(div_name, index) {
+  document.getElementById("pen" + index).style.display = "block";
 }
 
-function removeEditing(div_name) {
-  div_name.style.color = "black";
+function removeEditing(div_name, index) {
+  document.getElementById("pen" + index).style.display = "none";
 }
 
 function renderUser(container) {
@@ -79,8 +79,7 @@ function renderUser(container) {
     if (user.status === "Complété") {
       var div_name = document.createElement("div");
       div_name.classList.add("name");
-      div_name.addEventListener("mouseover", renderEditing(div_name));
-      div_name.addEventListener("mouseout", removeEditing(div_name));
+      div_name.setAttribute("id", "user" + index);
 
       var myImg = document.createElement("IMG");
       myImg.classList.add("avatar");
@@ -91,6 +90,23 @@ function renderUser(container) {
       name.textContent = user.name;
       div_name.appendChild(name);
       container.appendChild(div_name);
+
+      var pen = document.createElement("IMG");
+      pen.src = "tick2.png";
+      pen.setAttribute("id", "pen" + index);
+      pen.style.display = "none";
+      div_name.appendChild(pen);
+
+      document
+        .getElementById("user" + index)
+        .addEventListener("mouseenter", function() {
+          renderEditing(div_name, index);
+        });
+      document
+        .getElementById("user" + index)
+        .addEventListener("mouseleave", function() {
+          removeEditing(div_name, index);
+        });
     }
   });
 }
@@ -177,36 +193,83 @@ function renderChecksNumber(my_div, i) {
   my_div.appendChild(check_number);
 }
 
-function renderModal(id) {
-  setTimeout(function() {
-    document.getElementById(id).textContent = "#000000";
-  }, 3000);
+function renderModal(row_index, user_index) {
+//   setTimeout(function() {
+    var content = document.getElementById("modal-content"+row_index+user_index);
+    content.style.visibility = "visible";
+    
+    var div_dates = document.createElement("div");
+    div_dates.classList.add("modal_dates");
+    content.appendChild(div_dates);
+
+    var month = document.createElement("div");
+    month.classList.add("month");
+    month.textContent = model.dates[user_index].month;
+    div_dates.appendChild(month);
+
+    var div_date = document.createElement("div");
+    div_date.classList.add("date");
+    div_date.textContent = model.dates[row_index].date;
+    div_dates.appendChild(div_date);
+
+    var day = document.createElement("div");
+    day.classList.add("day");
+    day.textContent = model.dates[row_index].day;
+    div_dates.appendChild(day);
+
+    renderTime(model.dates[row_index], div_dates);
+
+    var div_user = document.createElement("div");
+    content.appendChild(div_user);
+
+    var user_name = document.createElement("div");
+    user_name.textContent = model.users[user_index].name;
+    div_user.appendChild(user_name);
+
+    var user_availability = document.createElement("div");
+    user_availability.textContent = (model.users[user_index].availability[row_index]) === 1 ? 
+    "Voted YES" : "Didn't vote for this";
+    div_user.appendChild(user_availability);
+
+
+    // console.log("Alo");
+//   }, 3000);
 }
 
-function renderAvailability(my_div, user, i) {
-  if (user.availability[i] === 1) {
-    var div = document.createElement("div");
-    div.classList.add("item");
+function removeModal(row_index, user_index) {
+    document.getElementById("modal-content"+row_index+user_index).style.visibility = "hidden";
+}
 
+function renderAvailability(my_div, user, row_index, user_index) {
+  var div = document.createElement("div");
+  div.classList.add("item");
+
+  if (user.availability[row_index] === 1) {
     var img = document.createElement("IMG");
     img.classList.add("icon");
     img.src = "tick1.png";
 
     div.appendChild(img);
-    my_div.appendChild(div);
   } else {
-    var div = document.createElement("div");
-    div.classList.add("item");
     div.classList.add("box-red");
-    div.addEventListener("mouseover", renderModal());
-
-    my_div.appendChild(div);
-
-    // var id = "item"+i;
-    // div.setAttribute("id", id);
-    // console.log(id);
-    // document.getElementById(id).addEventListener("mouseover", renderModal(id));
   }
+
+  var modal = document.createElement("div");
+  modal.classList.add("modal");
+
+  var modal_content = document.createElement("div");
+  modal_content.classList.add("modal-content");
+
+  modal_content.setAttribute("id", "modal-content"+row_index+user_index);
+
+  modal.appendChild(modal_content);
+  div.appendChild(modal);
+
+  div.addEventListener("mouseenter", function() {
+    renderModal(row_index,user_index);
+  });
+  div.addEventListener("mouseleave", function(){removeModal(row_index,user_index)});
+  my_div.appendChild(div);
 }
 
 function renderInProgress(my_div, user, index) {
@@ -229,12 +292,12 @@ function renderInProgress(my_div, user, index) {
   my_div.appendChild(in_progress);
 }
 
-function renderRow(my_div, i) {
-  model.users.map(user => {
+function renderRow(my_div, row_index) {
+  model.users.map((user, user_index) => {
     if (user.status === "Complété") {
-      renderAvailability(my_div, user, i);
+      renderAvailability(my_div, user, row_index, user_index);
     } else {
-      renderInProgress(my_div, user, i);
+      renderInProgress(my_div, user, row_index, user_index);
     }
   });
 }
@@ -287,7 +350,7 @@ function renderTableView() {
 function renderTable() {
   var container = document.getElementById("container");
   if (container.style.display === "none") {
-    container.style.display = "block";
+    container.style.display = "flex";
     for (i = 0; i < 8; i++) {
       var column = (document.getElementById("column" + i).style.display =
         "block");
