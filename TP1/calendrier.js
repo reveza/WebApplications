@@ -1,5 +1,6 @@
 model = {
   dates: [],
+  unique_dates: {date: [], day: []},
   users: []
 };
 
@@ -292,7 +293,7 @@ function renderAvailability(schedule, user, day_index, user_index) {
   schedule.appendChild(box_item);
 }
 
-function renderInProgressBox(my_div, user, user_index, day_index) {
+function renderInProgressBox(my_div, user, day_index) {
   let progress_img = document.createElement("IMG");
   progress_img.src = "check.png";
   progress_img.classList.add("icon");
@@ -313,7 +314,7 @@ function renderUsersRow(my_div, day_index) {
     if (user.status === "Complété") {
       renderAvailability(my_div, user, day_index, user_index);
     } else {
-      renderInProgressBox(my_div, user, user_index, day_index);
+      renderInProgressBox(my_div, user, day_index);
     }
   });
 }
@@ -367,22 +368,70 @@ function renderTableView() {
   document.getElementById("table-btn").style.borderBottomColor = "black";
 }
 
-function renderCalendarView() {
+function renderCalendarDayColumns(div) {
+  let unique_index = 0;
+
+  model.dates.map((d, index) => {
+    if (!model.unique_dates.date.includes(d.date)) {
+
+      let column = document.createElement("div");
+      column.setAttribute("id", "calendar-column-" + unique_index);
+      column.style.display = "none";
+
+      let header = document.createElement("div");
+      header.classList.add("header");
+      let id = "header" + index;
+      header.setAttribute("id", id);
+
+      let div_date = document.createElement("div");
+      div_date.classList.add("date");
+      div_date.textContent = d.date;
+      header.appendChild(div_date);
+
+      let day = document.createElement("div");
+      day.classList.add("day");
+      day.textContent = d.day;
+      header.appendChild(day);
+
+      column.appendChild(header);
+
+      document.getElementById("wrapper").appendChild(column);
+
+      model.unique_dates.date.push(d.date);
+      model.unique_dates.day.push(d.day);
+      unique_index += 1;
+    }
+  });
+}
+
+function renderCalendarTimeRows() {
   let div = document.createElement("div");
-  div.setAttribute("id", "calendar");
-  div.textContent = "Allo";
+  div.setAttribute("id", "calendar-container");
+  div.classList.add("container");
   div.style.display = "none";
+
   document.getElementById("wrapper").appendChild(div);
 }
 
+function renderCalendarView() {
+  
+  renderCalendarTimeRows();
+  renderCalendarDayColumns();
+}
+
 function clickedTableButton() {
+  document.getElementById("")
   document.getElementById("calendar-btn").style.borderBottom = "none";
   document.getElementById("table-btn").style.borderBottomColor = "black";
   document.getElementById("table-btn").style.borderBottom = "solid";
 }
 
 function hideCalendarView() {
-  document.getElementById("calendar").style.display = "none";
+  document.getElementById("calendar-container").style.display = "none";
+  
+  for (i = 0; i < model.unique_dates.length; i++) {
+    document.getElementById("calendar-column-" + i).style.display = "none";
+  }
 }
 
 function displayTableView() {
@@ -390,7 +439,7 @@ function displayTableView() {
 
   if (container.style.display === "none") {
     container.style.display = "flex";
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < model.dates.length; i++) {
       let column = (document.getElementById("column" + i).style.display =
         "block");
     }
@@ -413,15 +462,19 @@ function hideTableView() {
   let container = document.getElementById("container");
   container.style.display = "none";
 
-  for (i = 0; i < 9; i++) {
+  for (i = 0; i < model.dates.length; i++) {
     let column = (document.getElementById("column" + i).style.display = "none");
   }
 }
 
 function displayCalendarView() {
-  let calendar_div = document.getElementById("calendar");
+  let calendar_div = document.getElementById("calendar-container");
   if (calendar_div.style.display === "none") {
     calendar_div.style.display = "flex";
+  }
+
+  for (i = 0; i < model.unique_dates.date.length; i++) {
+    document.getElementById("calendar-column-" + i).style.display = "block";
   }
 }
 
