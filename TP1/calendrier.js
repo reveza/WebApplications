@@ -37,76 +37,115 @@ function removeEditing(div_name, index) {
   document.getElementById("pen" + index).style.display = "none";
 }
 
-function renderUser(container) {
-  model.users.map((user, index) => {
-    if (user.status === "Complété") {
-      let div_name = document.createElement("div");
-      div_name.classList.add("name");
-      div_name.setAttribute("id", "user" + index);
-
-      let myImg = document.createElement("IMG");
-      myImg.classList.add("avatar");
-      myImg.src = "particip2.png";
-      div_name.appendChild(myImg);
-
-      let name = document.createElement("SPAN");
-      name.textContent = user.name;
-      div_name.appendChild(name);
-      container.appendChild(div_name);
-
-      let pen = document.createElement("IMG");
-      pen.src = "tick2.png";
-      pen.setAttribute("id", "pen" + index);
-      pen.style.display = "none";
-      div_name.appendChild(pen);
-
-      document
-        .getElementById("user" + index)
-        .addEventListener("mouseenter", function () {
-          renderEditing(div_name, index);
-        });
-      document
-        .getElementById("user" + index)
-        .addEventListener("mouseleave", function () {
-          removeEditing(div_name, index);
-        });
+function updateName(index) {
+  model.users.map(user => {
+    if (user.status === "EnCours") {
+      user.status = "Complété";
+      updateCheckBoxes(user, index);
     }
+  });
+  updateInProgress();
+  model.users[index].status = "EnCours";
+  document.getElementById("user" + index).style.display = "none";
+  document.getElementById("name_box" + index).style.display = "flex";
+}
+
+function updateCheckBoxes(user, index) {
+  user.availability.map((day, day_index) => {
+    document.getElementById("check" + index + day_index).style.display = "hidden";
+    document.getElementById("box_item" + index + day_index).style.display = "visible";
   });
 }
 
-function renderInProgressUser(container) {
+function updateInProgress(user) {
+
+}
+
+function editName(div_name, index) {
+  document
+    .getElementById("user" + index)
+    .addEventListener("mouseenter", function () {
+      renderEditing(div_name, index);
+    });
+  document
+    .getElementById("user" + index)
+    .addEventListener("click", function () {
+      updateName(index);
+    });
+  document
+    .getElementById("user" + index)
+    .addEventListener("mouseleave", function () {
+      removeEditing(div_name, index);
+    });
+}
+
+function renderUser(container, user, index) {
+  let div_name = document.createElement("div");
+  div_name.classList.add("name");
+  div_name.style.display = "visible";
+  div_name.setAttribute("id", "user" + index);
+
+  let myImg = document.createElement("IMG");
+  myImg.classList.add("avatar");
+  myImg.src = "particip2.png";
+  div_name.appendChild(myImg);
+
+  let name = document.createElement("SPAN");
+  name.textContent = user.name;
+  div_name.appendChild(name);
+  container.appendChild(div_name);
+
+  let pen = document.createElement("IMG");
+  pen.src = "tick2.png";
+  pen.setAttribute("id", "pen" + index);
+  pen.style.display = "none";
+  div_name.appendChild(pen);
+
+  editName(div_name, index);
+}
+
+function renderInProgressUser(container, user, index) {
   let div = document.createElement("div");
   div.classList.add("name");
-  div.setAttribute("id", "blue-background");
+  div.setAttribute("id", "name_box" + index);
+  div.style.display = "none";
 
   let img = document.createElement("IMG");
   img.src = "particip2.png";
   img.classList.add("avatar");
 
   let input = document.createElement("input");
+  input.setAttribute("id", "input" + index);
   input.setAttribute("type", "text");
   input.setAttribute("name", "FirstName");
-  input.setAttribute("value", "Michel");
+  input.setAttribute("value", user.name);
   input.setAttribute("class", "box-name");
 
   div.appendChild(img);
   div.appendChild(input);
   container.appendChild(div);
+
+  if (user.status === "EnCours") {
+    div.style.display = "flex";
+  }
 }
 
-async function renderUsers() {
-  let container = document.getElementById("container");
-
+function renderUsers() {
   emptyHeader();
 
   let div_names = document.createElement("div");
   div_names.classList.add("header-name");
   div_names.textContent = model.users.length + "participants";
+
+  let container = document.getElementById("container");
   container.appendChild(div_names);
 
-  renderInProgressUser(container);
-
-  renderUser(container);
+  model.users.map((user, index) => {
+    if (user.status === "Complété") {
+      renderUser(container, user, index);
+    }
+    renderInProgressUser(container, user, index);
+  });
 }
 
 function renderTime(date, header) {
@@ -141,27 +180,23 @@ function updateCheckNumberCount(i) {
 function renderChecksNumber(my_div, i) {
   let count = countCheckNumber(i);
 
-  if (document.getElementById("number" + i)) {
-    document.getElementById("checkCount" + i).textContent = countCheckNumber(i);
-  } else {
-    let check_number = document.createElement("div");
-    check_number.classList.add("item");
-    let id = "number" + i;
-    check_number.setAttribute("id", id);
+  let check_number = document.createElement("div");
+  check_number.classList.add("item");
+  let id = "number" + i;
+  check_number.setAttribute("id", id);
 
-    let img = document.createElement("IMG");
-    img.src = "tick2.png";
-    img.setAttribute("height", "18");
-    img.setAttribute("width", "22");
+  let img = document.createElement("IMG");
+  img.src = "tick2.png";
+  img.setAttribute("height", "18");
+  img.setAttribute("width", "22");
 
-    let number = document.createElement("SPAN");
-    number.setAttribute("id", "checkCount" + i);
-    number.textContent = count;
+  let number = document.createElement("SPAN");
+  number.setAttribute("id", "checkCount" + i);
+  number.textContent = count;
 
-    check_number.appendChild(img);
-    check_number.appendChild(number);
-    my_div.appendChild(check_number);
-  }
+  check_number.appendChild(img);
+  check_number.appendChild(number);
+  my_div.appendChild(check_number);
 }
 
 function renderModalDateInfo(modal_content, day_index) {
@@ -228,8 +263,8 @@ function hideModal(user_index, day_index) {
 function updateModalView(box_item, user_index, day_index) {
   var timeout;
   box_item.addEventListener("mouseenter", function () {
-    timeout = setTimeout(function() {
-    displayModal(user_index, day_index);
+    timeout = setTimeout(function () {
+      displayModal(user_index, day_index);
     }, 3000);
   });
 
@@ -241,7 +276,7 @@ function updateModalView(box_item, user_index, day_index) {
 
 function createAvailabilityModal(box_item, day_index, user_index) {
   let modal = document.createElement("div");
-  modal.classList.add("modal");  
+  modal.classList.add("modal");
   box_item.appendChild(modal);
 
   createModalView(modal, user_index, day_index);
@@ -251,6 +286,8 @@ function createAvailabilityModal(box_item, day_index, user_index) {
 function renderAvailability(schedule, user, day_index, user_index) {
   let box_item = document.createElement("div");
   box_item.classList.add("item");
+  box_item.style.display = "flex";
+  box_item.setAttribute("id", "box_item" + user_index + day_index);
 
   if (user.availability[day_index] === 1) {
     let img = document.createElement("IMG");
@@ -267,7 +304,7 @@ function renderAvailability(schedule, user, day_index, user_index) {
   schedule.appendChild(box_item);
 }
 
-function renderInProgress(my_div, user, day_index) {
+function renderInProgressBox(my_div, user, user_index, day_index) {
   let progress_img = document.createElement("IMG");
   progress_img.src = "check.png";
   progress_img.classList.add("icon");
@@ -283,14 +320,40 @@ function renderInProgress(my_div, user, day_index) {
   my_div.appendChild(in_progress);
 }
 
-function renderRow(my_div, day_index) {
+function renderUsersRow(my_div, day_index) {
   model.users.map((user, user_index) => {
     if (user.status === "Complété") {
       renderAvailability(my_div, user, day_index, user_index);
     } else {
-      renderInProgress(my_div, user, day_index);
+      renderInProgressBox(my_div, user, user_index, day_index);
     }
   });
+}
+
+function renderScheduleHeader(schedule, d, day_index) {
+  let header = document.createElement("div");
+  header.classList.add("header");
+  let id = "header" + day_index;
+  header.setAttribute("id", id);
+
+  let month = document.createElement("div");
+  month.classList.add("month");
+  month.textContent = d.month;
+  header.appendChild(month);
+
+  let div_date = document.createElement("div");
+  div_date.classList.add("date");
+  div_date.textContent = d.date;
+  header.appendChild(div_date);
+
+  let day = document.createElement("div");
+  day.classList.add("day");
+  day.textContent = d.day;
+  header.appendChild(day);
+
+  renderTime(d, header);
+
+  schedule.appendChild(header);
 }
 
 function renderSchedule() {
@@ -298,33 +361,11 @@ function renderSchedule() {
     let schedule = document.createElement("div");
     schedule.setAttribute("id", "column" + day_index);
 
-    let header = document.createElement("div");
-    header.classList.add("header");
-    let id = "header" + day_index;
-    header.setAttribute("id", id);
-
-    let month = document.createElement("div");
-    month.classList.add("month");
-    month.textContent = d.month;
-    header.appendChild(month);
-
-    let div_date = document.createElement("div");
-    div_date.classList.add("date");
-    div_date.textContent = d.date;
-    header.appendChild(div_date);
-
-    let day = document.createElement("div");
-    day.classList.add("day");
-    day.textContent = d.day;
-    header.appendChild(day);
-
-    renderTime(d, header);
-
-    schedule.appendChild(header);
+    renderScheduleHeader(schedule, d, day_index);
 
     renderChecksNumber(schedule, day_index);
 
-    renderRow(schedule, day_index);
+    renderUsersRow(schedule, day_index);
 
     document.getElementById("wrapper").appendChild(schedule);
   });
