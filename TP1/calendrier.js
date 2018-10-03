@@ -38,27 +38,18 @@ function removeEditing(div_name, index) {
 }
 
 function updateName(index) {
-  model.users.map(user => {
+  model.users.map((user, user_index) => {
     if (user.status === "EnCours") {
+      console.log("user" + user_index);
       user.status = "Complété";
-      updateCheckBoxes(user, index);
+
+      document.getElementById("user" + user_index).style.display = "flex";
+      document.getElementById("name_box" + user_index).style.display = "none";
     }
   });
-  updateInProgress();
   model.users[index].status = "EnCours";
   document.getElementById("user" + index).style.display = "none";
   document.getElementById("name_box" + index).style.display = "flex";
-}
-
-function updateCheckBoxes(user, index) {
-  user.availability.map((day, day_index) => {
-    document.getElementById("check" + index + day_index).style.display = "hidden";
-    document.getElementById("box_item" + index + day_index).style.display = "visible";
-  });
-}
-
-function updateInProgress(user) {
-
 }
 
 function editName(div_name, index) {
@@ -82,7 +73,7 @@ function editName(div_name, index) {
 function renderUser(container, user, index) {
   let div_name = document.createElement("div");
   div_name.classList.add("name");
-  div_name.style.display = "visible";
+  (user.status === "Complété") ? div_name.style.display = "flex" : div_name.style.display = "none";
   div_name.setAttribute("id", "user" + index);
 
   let myImg = document.createElement("IMG");
@@ -141,9 +132,7 @@ function renderUsers() {
   container.appendChild(div_names);
 
   model.users.map((user, index) => {
-    if (user.status === "Complété") {
-      renderUser(container, user, index);
-    }
+    renderUser(container, user, index);
     renderInProgressUser(container, user, index);
   });
 }
@@ -286,7 +275,6 @@ function createAvailabilityModal(box_item, day_index, user_index) {
 function renderAvailability(schedule, user, day_index, user_index) {
   let box_item = document.createElement("div");
   box_item.classList.add("item");
-  box_item.style.display = "flex";
   box_item.setAttribute("id", "box_item" + user_index + day_index);
 
   if (user.availability[day_index] === 1) {
