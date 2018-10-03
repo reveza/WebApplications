@@ -164,15 +164,10 @@ function renderChecksNumber(my_div, i) {
   }
 }
 
-// user, day
-function renderModal(user_index, day_index) {
-  //   setTimeout(function() {
-  let content = document.getElementById("modal-content" + user_index + day_index);
-  content.style.visibility = "visible";
-
+function renderModalDateInfo(modal_content, day_index) {
   let div_dates = document.createElement("div");
   div_dates.classList.add("modal_dates");
-  content.appendChild(div_dates);
+  modal_content.appendChild(div_dates);
 
   let month = document.createElement("div");
   month.classList.add("month");
@@ -184,15 +179,17 @@ function renderModal(user_index, day_index) {
   div_date.textContent = model.dates[day_index].date;
   div_dates.appendChild(div_date);
 
-  let day = document.createElement("div");
-  day.classList.add("day");
-  day.textContent = model.dates[day_index].day;
-  div_dates.appendChild(day);
+  let div_day = document.createElement("div");
+  div_day.classList.add("day");
+  div_day.textContent = model.dates[day_index].day;
+  div_dates.appendChild(div_day);
 
   renderTime(model.dates[day_index], div_dates);
+}
 
+function renderModalUserInfo(modal_content, day_index, user_index) {
   let div_user = document.createElement("div");
-  content.appendChild(div_user);
+  modal_content.appendChild(div_user);
 
   let user_name = document.createElement("div");
   user_name.textContent = model.users[user_index].name;
@@ -200,37 +197,55 @@ function renderModal(user_index, day_index) {
 
   let user_availability = document.createElement("div");
   user_availability.textContent = (model.users[user_index].availability[day_index]) === 1 ?
-    "Voted YES" : "Didn't vote for this";
+    "Voted YES" :
+    "Didn't vote for this";
   div_user.appendChild(user_availability);
-
-
-  // console.log("Alo");
-  //   }, 3000);
 }
 
-function removeModal(row_index, user_index) {
-  document.getElementById("modal-content" + row_index + user_index).style.visibility = "hidden";
+function createModalView(modal, user_index, day_index) {
+  let modal_content = document.createElement("div");
+  modal_content.classList.add("modal-content");
+  modal_content.setAttribute("id", "modal-content" + user_index + day_index);
+  modal_content.style.visibility = "invisible";
+
+  renderModalDateInfo(modal_content, day_index);
+
+  renderModalUserInfo(modal_content, day_index, user_index);
+
+  modal.appendChild(modal_content);
+}
+
+function displayModal(user_index, day_index) {
+  let modal_content = document.getElementById("modal-content" + user_index + day_index);
+  modal_content.style.visibility = "visible";
+}
+
+function hideModal(user_index, day_index) {
+  let modal_content = document.getElementById("modal-content" + user_index + day_index);
+  modal_content.style.visibility = "hidden";
+}
+
+function updateModalView(box_item, user_index, day_index) {
+  var timeout;
+  box_item.addEventListener("mouseenter", function () {
+    timeout = setTimeout(function() {
+    displayModal(user_index, day_index);
+    }, 3000);
+  });
+
+  box_item.addEventListener("mouseleave", function () {
+    timeout = clearTimeout(timeout);
+    hideModal(user_index, day_index);
+  });
 }
 
 function createAvailabilityModal(box_item, day_index, user_index) {
   let modal = document.createElement("div");
-  modal.classList.add("modal");
-
-  let modal_content = document.createElement("div");
-  modal_content.classList.add("modal-content");
-
-  modal_content.setAttribute("id", "modal-content" + user_index + day_index);
-
-  modal.appendChild(modal_content);
+  modal.classList.add("modal");  
   box_item.appendChild(modal);
 
-  box_item.addEventListener("mouseenter", function () {
-    renderModal(user_index, day_index);
-  });
-
-  box_item.addEventListener("mouseleave", function () {
-    removeModal(user_index, day_index)
-  });
+  createModalView(modal, user_index, day_index);
+  updateModalView(box_item, user_index, day_index);
 }
 
 function renderAvailability(schedule, user, day_index, user_index) {
