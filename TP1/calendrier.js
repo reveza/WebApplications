@@ -1,8 +1,75 @@
+// MODEL //
+
 model = {
   dates: [],
   unique_dates: [],
   users: []
 };
+
+function updateUniqueDates() {
+  let unique_index = 0;
+
+  model.dates.map((d, index) => {
+    if (index === 0 || !model.unique_dates[unique_index-1].date !== (d.date)) {
+      let new_date = {
+        date: d.date,
+        day: d.day,
+        time_from: d.time_from,
+        time_after: d.time_after
+      }
+      model.unique_dates.push(new_date);
+      unique_index += 1;
+    }
+  });
+}
+
+function decodeDates(json_dates, newModel) {
+  let offset = -4;
+
+  json_dates.map(element => {
+    let js_date = new Date(element[0]);
+
+    // adjust timezone
+    let utc = js_date.getTime() + (js_date.getTimezoneOffset() * 60000);
+    let date = new Date(utc + (3600000 * offset));
+
+    // each event is two hours long
+    var time_length = new Date(date);
+    time_length.setHours(date.getHours() + 2);
+
+    let mydate = {
+      day: date.toLocaleString("en-us", { weekday: "short" }),
+      month: date.toLocaleString("en-us", { month: "short" }),
+      date: date.toLocaleString("en-us", { day: "2-digit" }),
+      time_from: date.toLocaleString("en-us", { hour: "2-digit" }),
+      time_after: time_length.toLocaleString("en-us", { hour: "2-digit" })
+    };
+    newModel.dates.push(mydate);
+  });
+}
+
+function decodeUsers(json_users, newModel) {
+  json_users.map(element => {
+    myuser = {
+      name: element.Nom,
+      status: element.Statut,
+      availability: element.Disponibilité
+    };
+    newModel.users.push(myuser);
+  });
+}
+
+function decodeModel(json) {
+  let newModel = model;
+
+  json_dates = json.Calendrier;
+  json_users = json.Participants;
+
+  decodeDates(json_dates, newModel);
+  decodeUsers(json_users, newModel);
+}
+
+// CONTROLLER //
 
 function checkButton(image, header, number, user, day_index) {
   let img = document.getElementById(image);
@@ -24,21 +91,68 @@ function checkButton(image, header, number, user, day_index) {
   }
 }
 
+function updateName(div_name, index) {
+  document
+    .getElementById("user" + index)
+    .addEventListener("mouseenter", function () {
+      renderPenEdition(div_name, index);
+    });
+  document
+    .getElementById("user" + index)
+    .addEventListener("click", function () {
+      editName(index);
+    });
+  document
+    .getElementById("user" + index)
+    .addEventListener("mouseleave", function () {
+      removePenEdition(div_name, index);
+    });
+}
+
+function updateCheckNumberCount(i) {
+  document.getElementById("checkCount" + i).textContent = countCheckNumber(i);
+
+}
+
+function countCheckNumber(i) {
+  let count = 0;
+  model.users.map(user => {
+    count += user.availability[i];
+  });
+  return count;
+}
+
+function updateModalView(box_item, user_index, day_index) {
+  var timeout;
+  box_item.addEventListener("mouseenter", function () {
+    timeout = setTimeout(function () {
+      displayModal(user_index, day_index);
+    }, 3000);
+  });
+
+  box_item.addEventListener("mouseleave", function () {
+    timeout = clearTimeout(timeout);
+    hideModal(user_index, day_index);
+  });
+}
+
+function update(newModel) {
+  if (newModel != model) {
+    renderTableView();
+    renderCalendarView();
+  }
+}
+
+
+// VIEW // 
+
 function emptyHeader() {
   let div_empty = document.createElement("div");
   div_empty.classList.add("header-empty");
   container.appendChild(div_empty);
 }
 
-function renderEditing(div_name, index) {
-  document.getElementById("pen" + index).style.display = "block";
-}
-
-function removeEditing(div_name, index) {
-  document.getElementById("pen" + index).style.display = "none";
-}
-
-function updateName(index) {
+function editName(index) {
   model.users.map((user, user_index) => {
     if (user.status === "EnCours") {
       user.status = "Complété";
@@ -52,22 +166,12 @@ function updateName(index) {
   document.getElementById("name_box" + index).style.display = "flex";
 }
 
-function editName(div_name, index) {
-  document
-    .getElementById("user" + index)
-    .addEventListener("mouseenter", function () {
-      renderEditing(div_name, index);
-    });
-  document
-    .getElementById("user" + index)
-    .addEventListener("click", function () {
-      updateName(index);
-    });
-  document
-    .getElementById("user" + index)
-    .addEventListener("mouseleave", function () {
-      removeEditing(div_name, index);
-    });
+function renderPenEdition(div_name, index) {
+  document.getElementById("pen" + index).style.display = "block";
+}
+
+function removePenEdition(div_name, index) {
+  document.getElementById("pen" + index).style.display = "none";
 }
 
 function renderUser(container, user, index) {
@@ -92,7 +196,7 @@ function renderUser(container, user, index) {
   pen.style.display = "none";
   div_name.appendChild(pen);
 
-  editName(div_name, index);
+  updateName(div_name, index);
 }
 
 function renderInProgressUser(container, user, index) {
@@ -151,19 +255,6 @@ function renderTime(date, header) {
   time_wrapper.appendChild(time_after);
 
   header.appendChild(time_wrapper);
-}
-
-function countCheckNumber(i) {
-  let count = 0;
-  model.users.map(user => {
-    count += user.availability[i];
-  });
-  return count;
-}
-
-function updateCheckNumberCount(i) {
-  document.getElementById("checkCount" + i).textContent = countCheckNumber(i);
-
 }
 
 function renderChecksNumber(my_div, i) {
@@ -247,20 +338,6 @@ function displayModal(user_index, day_index) {
 function hideModal(user_index, day_index) {
   let modal_content = document.getElementById("modal-content" + user_index + day_index);
   modal_content.style.visibility = "hidden";
-}
-
-function updateModalView(box_item, user_index, day_index) {
-  var timeout;
-  box_item.addEventListener("mouseenter", function () {
-    timeout = setTimeout(function () {
-      displayModal(user_index, day_index);
-    }, 3000);
-  });
-
-  box_item.addEventListener("mouseleave", function () {
-    timeout = clearTimeout(timeout);
-    hideModal(user_index, day_index);
-  });
 }
 
 function createAvailabilityModal(box_item, day_index, user_index) {
@@ -365,23 +442,6 @@ function renderTableView() {
 
   // Table Button is selected view mode by default when page loading
   document.getElementById("table-btn").style.borderBottomColor = "black";
-}
-
-function updateUniqueDates() {
-  let unique_index = 0;
-
-  model.dates.map((d, index) => {
-    if (index === 0 || !model.unique_dates[unique_index-1].date !== (d.date)) {
-      let new_date = {
-        date: d.date,
-        day: d.day,
-        time_from: d.time_from,
-        time_after: d.time_after
-      }
-      model.unique_dates.push(new_date);
-      unique_index += 1;
-    }
-  });
 }
 
 function renderCalendarDayColumns(div) {
@@ -507,59 +567,6 @@ function renderCalendar() {
   hideTableView();
   displayCalendarView();
   clickedCalendarButton();
-}
-
-function decodeDates(json_dates, newModel) {
-  let offset = -4;
-
-  json_dates.map(element => {
-    let js_date = new Date(element[0]);
-
-    // adjust timezone
-    let utc = js_date.getTime() + (js_date.getTimezoneOffset() * 60000);
-    let date = new Date(utc + (3600000 * offset));
-
-    // each event is two hours long
-    var time_length = new Date(date);
-    time_length.setHours(date.getHours() + 2);
-
-    let mydate = {
-      day: date.toLocaleString("en-us", { weekday: "short" }),
-      month: date.toLocaleString("en-us", { month: "short" }),
-      date: date.toLocaleString("en-us", { day: "2-digit" }),
-      time_from: date.toLocaleString("en-us", { hour: "2-digit" }),
-      time_after: time_length.toLocaleString("en-us", { hour: "2-digit" })
-    };
-    newModel.dates.push(mydate);
-  });
-}
-
-function decodeUsers(json_users, newModel) {
-  json_users.map(element => {
-    myuser = {
-      name: element.Nom,
-      status: element.Statut,
-      availability: element.Disponibilité
-    };
-    newModel.users.push(myuser);
-  });
-}
-
-function decodeModel(json) {
-  let newModel = model;
-
-  json_dates = json.Calendrier;
-  json_users = json.Participants;
-
-  decodeDates(json_dates, newModel);
-  decodeUsers(json_users, newModel);
-}
-
-function update(newModel) {
-  if (newModel != model) {
-    renderTableView();
-    renderCalendarView();
-  }
 }
 
 function initModel() {
