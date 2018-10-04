@@ -1,6 +1,6 @@
 model = {
   dates: [],
-  unique_dates: {date: [], day: []},
+  unique_dates: [],
   users: []
 };
 
@@ -41,7 +41,6 @@ function removeEditing(div_name, index) {
 function updateName(index) {
   model.users.map((user, user_index) => {
     if (user.status === "EnCours") {
-      console.log("user" + user_index);
       user.status = "Complété";
 
       document.getElementById("user" + user_index).style.display = "flex";
@@ -368,14 +367,29 @@ function renderTableView() {
   document.getElementById("table-btn").style.borderBottomColor = "black";
 }
 
-function renderCalendarDayColumns(div) {
+function updateUniqueDates() {
   let unique_index = 0;
 
   model.dates.map((d, index) => {
-    if (!model.unique_dates.date.includes(d.date)) {
+    if (index === 0 || !model.unique_dates[unique_index-1].date !== (d.date)) {
+      let new_date = {
+        date: d.date,
+        day: d.day,
+        time_from: d.time_from,
+        time_after: d.time_after
+      }
+      model.unique_dates.push(new_date);
+      unique_index += 1;
+    }
+  });
+}
 
+function renderCalendarDayColumns(div) {
+  updateUniqueDates();
+
+  model.unique_dates.map((d, index) => {
       let column = document.createElement("div");
-      column.setAttribute("id", "calendar-column-" + unique_index);
+      column.setAttribute("id", "calendar-column-" + index);
       column.style.display = "none";
 
       let header = document.createElement("div");
@@ -396,25 +410,37 @@ function renderCalendarDayColumns(div) {
       column.appendChild(header);
 
       document.getElementById("wrapper").appendChild(column);
-
-      model.unique_dates.date.push(d.date);
-      model.unique_dates.day.push(d.day);
-      unique_index += 1;
-    }
   });
 }
 
 function renderCalendarTimeRows() {
+  let hours = ["10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4 PM"];
+
   let div = document.createElement("div");
   div.setAttribute("id", "calendar-container");
   div.classList.add("container");
   div.style.display = "none";
 
+  let div_empty = document.createElement("div");
+  div_empty.classList.add("header-empty");
+  div.appendChild(div_empty);
+
+
+
+  hours.forEach(hour => {
+    let div_time = document.createElement("div");
+    div_time.textContent = hour;
+    div_time.classList.add("calendar-row");
+
+    div.appendChild(div_time);
+  });
+
+
   document.getElementById("wrapper").appendChild(div);
 }
 
 function renderCalendarView() {
-  
+
   renderCalendarTimeRows();
   renderCalendarDayColumns();
 }
@@ -428,7 +454,7 @@ function clickedTableButton() {
 
 function hideCalendarView() {
   document.getElementById("calendar-container").style.display = "none";
-  
+
   for (i = 0; i < model.unique_dates.length; i++) {
     document.getElementById("calendar-column-" + i).style.display = "none";
   }
@@ -472,8 +498,7 @@ function displayCalendarView() {
   if (calendar_div.style.display === "none") {
     calendar_div.style.display = "flex";
   }
-
-  for (i = 0; i < model.unique_dates.date.length; i++) {
+  for (i = 0; i < model.unique_dates.length; i++) {
     document.getElementById("calendar-column-" + i).style.display = "block";
   }
 }

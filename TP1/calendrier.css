@@ -35,6 +35,12 @@
     border-top: 1px solid lightgrey;
 }
 
+.calendar-row {
+    flex-grow: 0.2;
+    display: flex;
+    flex-direction: column;
+}
+
 .box-red {
     background-color: #FCEDE9;
 }
@@ -54,6 +60,16 @@
     padding-right: 16px;
     padding-left: 16px;
     max-height: 40px;
+}
+
+.calendar-time {
+    display: flex;
+    flex-grow: 1;
+    font-size: 14px;
+    align-items: center;
+    justify-content: flex-start;
+    max-height: 40px;
+    padding: 16px;
 }
 
 .name {
