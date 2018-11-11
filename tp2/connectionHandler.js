@@ -1,8 +1,9 @@
 class ConnectionHandler extends Observer {
-    constructor (url) {
+    constructor (url, user) {
         super();
-        this.ws = new WebSocket(url);
+        this.ws = new WebSocket(url+user);
         this.connect();
+        this.username = user;
         this.channelId = "dbf646dc-5006-4d9f-8815-fd37514818ee";
     }
 
@@ -10,7 +11,6 @@ class ConnectionHandler extends Observer {
         this.ws.onopen = () => {
             this.ws.onmessage = (e) => {
                 let msg = JSON.parse(event.data);
-                console.log(msg);
                 this.notifyObserver(msg);
             }
         }

@@ -47,7 +47,6 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    align-items: center;
     min-height: 600px
 }
 .icon-groups {
@@ -81,4 +80,30 @@ body {
     box-shadow: inset 0 1px 0 #80B0FB;
     min-height: 80px;
     min-width: 100px;
+}
+
+.chat-bubble {
+    padding: 15px;
+    margin-bottom: 1em;
+    color: #fff;
+    background: #c81e2b;
+    border-radius: 10px;
+    width: fit-content;
+}
+
+.chat-row {
+    display: flex;
+}
+
+.chat-user {
+    justify-content: flex-start;
+}
+
+.external-chat-user {
+    justify-content: flex-end;
+}
+
+.chat {
+    display: flex;
+    flex-direction: column;
 }

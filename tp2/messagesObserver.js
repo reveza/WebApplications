@@ -4,12 +4,25 @@ class MessageObserver {
         this.input = '';
         this.channel = channel;
         this.viewSendMessage();
+        this.messages = [];
     }
 
     addEvent(msg) {
         if (msg.eventType === "onMessage") {
-            console.log(msg.data, msg.sender);
+            this.renderChatBubbles(msg);
         }
+    }
+
+    renderChatBubbles(msg) {
+        let chat = document.getElementById('chat');
+        let chatRow = document.createElement('div');
+        chatRow.classList.add('chat-row');
+        let chatBubble = document.createElement('div');
+        chatBubble.classList.add('chat-bubble');
+        chatBubble.textContent = msg.data;
+
+        chatRow.appendChild(chatBubble);
+        chat.appendChild(chatRow);
     }
 
     sendMessage(text) {
@@ -21,9 +34,11 @@ class MessageObserver {
 
     viewSendMessage() {
         let sendButton = document.getElementById('send');
-        sendButton.onclick = function() {
+        sendButton.onclick = function () {
             this.input = document.getElementById('textbox').value;
             this.sendMessage(this.input);
+            document.getElementById('textbox').value = '';
+            this.input = '';
         }.bind(this);
     }
 }
