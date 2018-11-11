@@ -1,9 +1,9 @@
 class ConnectionHandler extends Observer {
-    constructor (url, observers) {
+    constructor (url) {
         super();
         this.ws = new WebSocket(url);
         this.connect();
-        this.addObservers(observers);
+        this.channelId = "dbf646dc-5006-4d9f-8815-fd37514818ee";
     }
 
     connect() {
@@ -26,5 +26,9 @@ class ConnectionHandler extends Observer {
         this.observers.map(observer => {
             observer.addEvent(msg);
         })
+    }
+
+    sendMsg(msg) {
+        this.ws.send(JSON.stringify(msg));
     }
 }
