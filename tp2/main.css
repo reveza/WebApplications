@@ -84,7 +84,6 @@ body {
 
 .chat-bubble {
     padding: 15px;
-    margin-bottom: 1em;
     color: #fff;
     background: #c81e2b;
     border-radius: 10px;
@@ -93,6 +92,8 @@ body {
 
 .chat-row {
     display: flex;
+    flex-direction: column;
+    margin-bottom: 1em;
 }
 
 .chat-user {
@@ -100,7 +101,7 @@ body {
 }
 
 .external-chat-user {
-    justify-content: flex-end;
+    align-items: flex-end;
 }
 
 .chat {

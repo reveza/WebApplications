@@ -1,8 +1,9 @@
 class ChannelObserver {
-    constructor(observable, channelId) {
+    constructor(observable, channelId, username) {
         this.observable = observable;
         this.channelId = channelId;
         this.channelIds = [];
+        this.username = username;
     }
 
     addEvent(msg) {
@@ -33,6 +34,13 @@ class ChannelObserver {
                 this.channelIds.push(channel.id);
             }
         });
-        console.log('CHANNELS', msg);
+    }
+
+    joinChannel() {
+        let channelLink = document.getElementById('');
+        sendButton.onclick = function() {
+            this.input = document.getElementById('textbox').value;
+            this.sendMessage(this.input);
+        }.bind(this);
     }
 }
