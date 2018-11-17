@@ -7,12 +7,7 @@ class ChannelObserver {
     }
 
     addEvent(msg) {
-        if (msg.eventType === "onJoinChannel") {
-
-            // this.channel = 
-            // let msg = new Channel(this.channelId, this.channelName, this.status, this.msg, this.nbOfUsers);
-            console.log(msg.data, msg.sender);
-        } else if (msg.eventType === "updateChannelsList") {
+        if (msg.eventType === "updateChannelsList") {
             this.updateChannelsList(msg);
         }
     }
@@ -27,6 +22,11 @@ class ChannelObserver {
 
                 let channelElement = document.createElement('a');
                 channelElement.textContent = channel.name;
+                channelElement.id = channel.id;
+                channelElement.classList = 'channel';
+                channelElement.onclick = function() {
+                    this.switchChannel(channel.id)
+                }.bind(this)
 
                 channelDiv.appendChild(channelElement);
                 channelsList.appendChild(channelDiv);
@@ -36,11 +36,13 @@ class ChannelObserver {
         });
     }
 
-    joinChannel() {
-        let channelLink = document.getElementById('');
-        sendButton.onclick = function() {
-            this.input = document.getElementById('textbox').value;
-            this.sendMessage(this.input);
-        }.bind(this);
+    switchChannel(id) {
+        const leaveMessage = new Message("onLeaveChannel", this.channelId, "", this.username, Date.now());
+        this.observable.sendMsg(leaveMessage);
+        this.channelId = id;
+        this.observable.loadPreviousMessage(this.channelId);
+        const joinnedMessage = new Message("onJoinChannel", this.channelId, "", this.username, Date.now());
+        this.observable.sendMsg(joinnedMessage);
+
     }
 }

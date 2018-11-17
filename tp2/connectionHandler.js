@@ -1,10 +1,10 @@
 class ConnectionHandler extends Observer {
-    constructor (url, user) {
+    constructor(url, user, channelId) {
         super();
-        this.ws = new WebSocket(url+user);
+        this.ws = new WebSocket(url + user);
         this.connect();
         this.username = user;
-        this.channelId = "dbf646dc-5006-4d9f-8815-fd37514818ee";
+        this.channelId = channelId;
     }
 
     connect() {
@@ -13,11 +13,18 @@ class ConnectionHandler extends Observer {
                 let msg = JSON.parse(event.data);
                 this.notifyObserver(msg);
             }
+            this.loadPreviousMessage(this.channelId);
         }
     }
 
+    loadPreviousMessage(channelId) {
+        this.channelId = channelId;
+        var message = new Message("onGetChannel", this.channelId, "", this.username, Date.now());
+        this.sendMsg(message);
+    }
+
     addObservers(observers) {
-        observers.map( observer => {
+        observers.map(observer => {
             this.observers.push(observer);
         });
     }
@@ -30,5 +37,7 @@ class ConnectionHandler extends Observer {
 
     sendMsg(msg) {
         this.ws.send(JSON.stringify(msg));
+        console.log(msg)
     }
+
 }

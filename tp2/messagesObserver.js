@@ -7,55 +7,34 @@ class MessageObserver {
         this.messages = [];
         this.username = username;
     }
-
+    /**
+     * 
+     * @param {Message} message 
+     */
     addEvent(msg) {
         if (msg.eventType === "onMessage") {
-            this.renderChatBubbles(msg);
-            console.log(msg);
+            renderChatBubbles(msg);
+        } else if (msg.eventType === "onGetChannel") {
+            this.loadPreviousMessage(msg);
         }
     }
 
-    renderChatBubbles(msg) {
-        let chat = document.getElementById('chat');
+    loadPreviousMessage(messages) {
+        this.emptyChatBox();
+        messages.data.messages.forEach(msg => {
+            renderChatBubbles(msg);
+        })
+    }
 
-        let chatRow = document.createElement('div');
-        chatRow.classList.add('chat-row');
-
-        let chatBubble = document.createElement('div');
-        chatBubble.classList.add('chat-bubble');
-        chatBubble.textContent = msg.data;
-
-        let chatSender = document.createElement('div');
-        chatSender.textContent = msg.sender;
-        
-        let timestamp = new Date(msg.timestamp);
-        let chatTime= document.createElement('div');
-        let days = ["DIM", "LUN", "MAR", "MER", "JEU", "VEN", "SAM"];
-        let day = timestamp.getDay();
-        let date = timestamp.getDate();
-        let hour = timestamp.getHours();
-        let minute = timestamp.getMinutes();
-
-        let myDate = days[day] + ' ' + date + ', ' + hour + ':' + minute;
-
-        chatTime.textContent = myDate;
-
-        if (msg.sender === this.username) {
-            chatRow.classList.add('chat-user');
-        } else {
-            chatRow.classList.add('external-chat-user');
-        }
-
-        chatRow.appendChild(chatSender);
-        chatRow.appendChild(chatBubble);
-        chatRow.appendChild(chatTime);
-        chat.appendChild(chatRow);
+    emptyChatBox() {
+        const myChatBox = document.getElementById("chat");
+        while (myChatBox.firstChild) myChatBox.removeChild(myChatBox.firstChild);
     }
 
     sendMessage(text) {
         let date = new Date();
         let timestamp = date.getTime();
-        let msg = new Message("onMessage", "dbf646dc-5006-4d9f-8815-fd37514818ee", text, this.username, timestamp);
+        let msg = new Message("onMessage", this.channel, text, this.username, timestamp);
         this.observable.sendMsg(msg);
     }
 
