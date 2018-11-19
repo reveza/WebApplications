@@ -1,4 +1,4 @@
-function renderChatBubbles(msg) {
+function renderChatBubbles(msg, username) {
     let chat = document.getElementById('chat');
 
     let chatRow = document.createElement('div');
@@ -7,12 +7,11 @@ function renderChatBubbles(msg) {
     let chatBubble = document.createElement('div');
     chatBubble.classList.add('chat-bubble');
     chatBubble.textContent = msg.data;
-
     let chatSender = document.createElement('div');
     chatSender.textContent = msg.sender;
-    
+
     let timestamp = new Date(msg.timestamp);
-    let chatTime= document.createElement('div');
+    let chatTime = document.createElement('div');
     let days = ["DIM", "LUN", "MAR", "MER", "JEU", "VEN", "SAM"];
     let day = timestamp.getDay();
     let date = timestamp.getDate();
@@ -23,7 +22,7 @@ function renderChatBubbles(msg) {
 
     chatTime.textContent = myDate;
 
-    if (msg.sender === this.username) {
+    if (msg.sender === username) {
         chatRow.classList.add('chat-user');
     } else {
         chatRow.classList.add('external-chat-user');
@@ -69,7 +68,15 @@ function getUserName() {
     }
 }
 
+function refresh() {
+    let logo = document.getElementById('logo');
+    logo.onclick = function () {
+        location.reload();
+    }
+}
+
 window.onload = async () => {
+    refresh();
     let username = await getUserName();
     let url = 'ws://log2420-nginx.info.polymtl.ca/chatservice?username=';
     let generalChannel = 'dbf646dc-5006-4d9f-8815-fd37514818ee';

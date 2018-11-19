@@ -9,7 +9,12 @@ body {
     padding-left: 16px;
     padding-right: 16px;
     pointer-events: auto;
-    cursor: hand;
+    text-decoration: none;
+}
+
+a:hover, a:visited, a:link, a:active
+{
+    text-decoration: none;
 }
 
 .navbar {
@@ -37,7 +42,6 @@ body {
 .content {
     display: flex;
     justify-content: space-between;
-    align-items: center;
     padding-right: 100px;
     padding-left: 100px;
     padding-top: 40px;
@@ -46,7 +50,7 @@ body {
 .chat-column {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
     min-height: 600px
 }
 .icon-groups {
@@ -91,6 +95,7 @@ body {
 }
 
 .chat-row {
+    min-height: 100px;
     display: flex;
     flex-direction: column;
     margin-bottom: 1em;
@@ -106,5 +111,7 @@ body {
 
 .chat {
     display: flex;
+    overflow-y: auto;
+    max-height: 500px;
     flex-direction: column;
 }

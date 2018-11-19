@@ -2,9 +2,10 @@ class ConnectionHandler extends Observer {
     constructor(url, user, channelId) {
         super();
         this.ws = new WebSocket(url + user);
-        this.connect();
         this.username = user;
         this.channelId = channelId;
+        this.observers = []
+        this.connect();
     }
 
     connect() {
@@ -36,8 +37,13 @@ class ConnectionHandler extends Observer {
     }
 
     sendMsg(msg) {
+        if (msg.channelId === "") {
+            msg.channelId = this.channelId;
+        }
         this.ws.send(JSON.stringify(msg));
-        console.log(msg)
     }
 
+    setChannelId(id) {
+        this.channelId = id;
+    }
 }

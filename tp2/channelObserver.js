@@ -2,8 +2,9 @@ class ChannelObserver {
     constructor(observable, channelId, username) {
         this.observable = observable;
         this.channelId = channelId;
-        this.channelIds = [];
+        this.channelIds = {};
         this.username = username;
+        this.generalChannel = 'dbf646dc-5006-4d9f-8815-fd37514818ee';
     }
 
     addEvent(msg) {
@@ -14,8 +15,8 @@ class ChannelObserver {
 
     updateChannelsList(msg) {
         let channelsList = document.getElementById('chatColumn');
-        msg.data.map( channel => {
-            let isNotIncluded = !(this.channelIds.includes(channel.id));
+        msg.data.map(channel => {
+            let isNotIncluded = !(this.channelIds[channel.id]);
             if (isNotIncluded) {
                 let channelDiv = document.createElement('div');
                 channelDiv.classList.add('row');
@@ -25,24 +26,61 @@ class ChannelObserver {
                 channelElement.id = channel.id;
                 channelElement.classList = 'channel';
                 channelElement.onclick = function() {
-                    this.switchChannel(channel.id)
+                    this.displayChannel(channel.id);
                 }.bind(this)
 
+                let icon = document.createElement('a');
+                icon.id = channel.id;
+                if (channel.id === "dbf646dc-5006-4d9f-8815-fd37514818ee") {
+                    icon.classList = 'icon-navbar glyphicon glyphicon-star'
+                    this.channelIds[channel.id] = 'active';
+                } else {
+                    icon.classList = 'icon-navbar glyphicon glyphicon-plus'
+                    this.channelIds[channel.id] = 'disabled';
+                }
+
+                icon.onclick = function () {
+                    this.switchChannel(channel.id)
+                }.bind(this)
+                channelDiv.appendChild(icon);
                 channelDiv.appendChild(channelElement);
                 channelsList.appendChild(channelDiv);
-
-                this.channelIds.push(channel.id);
             }
         });
+        console.log(this.channelIds);
     }
 
     switchChannel(id) {
-        const leaveMessage = new Message("onLeaveChannel", this.channelId, "", this.username, Date.now());
-        this.observable.sendMsg(leaveMessage);
-        this.channelId = id;
-        this.observable.loadPreviousMessage(this.channelId);
-        const joinnedMessage = new Message("onJoinChannel", this.channelId, "", this.username, Date.now());
-        this.observable.sendMsg(joinnedMessage);
+        if (this.channelIds[id] === 'active') {
+            this.leaveChannel(id);
+        } else {
+            this.joinChannel(id);
+        }
+    }
 
+    leaveChannel(id) {
+        const leaveMessage = new Message("onLeaveChannel", id, "", this.username, Date.now());
+        this.observable.sendMsg(leaveMessage);
+        this.channelIds[id] = 'disabled';
+        if (id !== this.generalChannel) {
+            let icon = document.getElementById(id);
+            icon.classList = 'icon-navbar glyphicon glyphicon-plus';
+        }
+    }
+
+    displayChannel(id) {
+        this.channelId = id;
+        this.observable.setChannelId(id);
+        this.observable.loadPreviousMessage(this.channelId);
+    }
+
+    joinChannel(id) {
+        const joinnedMessage = new Message("onJoinChannel", id, "", this.username, Date.now());
+        this.observable.sendMsg(joinnedMessage);
+        this.channelIds[id] = 'active';
+        if (id !== this.generalChannel) {
+            let icon = document.getElementById(id);
+            icon.classList = 'icon-navbar glyphicon glyphicon-minus';
+        }
     }
 }

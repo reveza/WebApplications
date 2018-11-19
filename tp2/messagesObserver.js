@@ -13,16 +13,21 @@ class MessageObserver {
      */
     addEvent(msg) {
         if (msg.eventType === "onMessage") {
-            renderChatBubbles(msg);
+            if (this.channel === msg.channelId) {
+                renderChatBubbles(msg, this.username);
+            }
         } else if (msg.eventType === "onGetChannel") {
-            this.loadPreviousMessage(msg);
+            this.loadPreviousMessage(msg, this.username);
+            this.channel = msg.channelId;
+        } else if (msg.eventType === "onJoinChannel" || msg.eventType === "onLeaveChannel") {
+            renderChatBubbles(msg, this.username);
         }
     }
 
     loadPreviousMessage(messages) {
         this.emptyChatBox();
         messages.data.messages.forEach(msg => {
-            renderChatBubbles(msg);
+            renderChatBubbles(msg, this.username);
         })
     }
 
@@ -34,7 +39,7 @@ class MessageObserver {
     sendMessage(text) {
         let date = new Date();
         let timestamp = date.getTime();
-        let msg = new Message("onMessage", this.channel, text, this.username, timestamp);
+        let msg = new Message("onMessage", "", text, this.username, timestamp);
         this.observable.sendMsg(msg);
     }
 
