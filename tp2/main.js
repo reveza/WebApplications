@@ -5,7 +5,11 @@ function renderChatBubbles(msg, username) {
     chatRow.classList.add('chat-row');
 
     let chatBubble = document.createElement('div');
-    chatBubble.classList.add('chat-bubble');
+    if (msg.sender === 'Admin') {
+        chatBubble.classList.add('chat-admin')
+    } else {
+        chatBubble.classList.add('chat-bubble');        
+    }
     chatBubble.textContent = msg.data;
     let chatSender = document.createElement('div');
     chatSender.textContent = msg.sender;
@@ -24,6 +28,8 @@ function renderChatBubbles(msg, username) {
 
     if (msg.sender === username) {
         chatRow.classList.add('chat-user');
+    } else if (msg.sender === 'Admin') {
+        chatRow.classList.add('admin');
     } else {
         chatRow.classList.add('external-chat-user');
     }

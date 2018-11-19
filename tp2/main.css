@@ -94,6 +94,15 @@ a:hover, a:visited, a:link, a:active
     width: fit-content;
 }
 
+.chat-admin {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.admin {
+    align-items: center;
+}
+
 .chat-row {
     min-height: 100px;
     display: flex;
@@ -102,11 +111,11 @@ a:hover, a:visited, a:link, a:active
 }
 
 .chat-user {
-    justify-content: flex-start;
+    align-items: flex-end;
 }
 
 .external-chat-user {
-    align-items: flex-end;
+    align-items: flex-start;
 }
 
 .chat {

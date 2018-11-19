@@ -5,6 +5,7 @@ class ChannelObserver {
         this.channelIds = {};
         this.username = username;
         this.generalChannel = 'dbf646dc-5006-4d9f-8815-fd37514818ee';
+        this.createChannel();
     }
 
     addEvent(msg) {
@@ -25,7 +26,7 @@ class ChannelObserver {
                 channelElement.textContent = channel.name;
                 channelElement.id = channel.id;
                 channelElement.classList = 'channel';
-                channelElement.onclick = function() {
+                channelElement.onclick = function () {
                     this.displayChannel(channel.id);
                 }.bind(this)
 
@@ -47,7 +48,6 @@ class ChannelObserver {
                 channelsList.appendChild(channelDiv);
             }
         });
-        console.log(this.channelIds);
     }
 
     switchChannel(id) {
@@ -82,5 +82,18 @@ class ChannelObserver {
             let icon = document.getElementById(id);
             icon.classList = 'icon-navbar glyphicon glyphicon-minus';
         }
+    }
+
+    createChannel() {
+        let newChannel = document.getElementById('add-channel');
+        newChannel.onclick = function () {
+            let name = prompt('Please enter a channel name');
+            if (name !== null) {
+                let createChannel = new Message("onCreateChannel", "", name, this.username, Date.now());
+                this.observable.sendMsg(createChannel);
+                createChannel.eventType = "updateChannelsList";
+                this.observable.sendMsg(createChannel);
+            }
+        }.bind(this)
     }
 }
