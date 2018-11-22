@@ -1,44 +1,6 @@
-function renderChatBubbles(msg, username) {
-    let chat = document.getElementById('chat');
-
-    let chatRow = document.createElement('div');
-    chatRow.classList.add('chat-row');
-
-    let chatBubble = document.createElement('div');
-    if (msg.sender === 'Admin') {
-        chatBubble.classList.add('chat-admin')
-    } else {
-        chatBubble.classList.add('chat-bubble');        
-    }
-    chatBubble.textContent = msg.data;
-    let chatSender = document.createElement('div');
-    chatSender.textContent = msg.sender;
-
-    let timestamp = new Date(msg.timestamp);
-    let chatTime = document.createElement('div');
-    let days = ["DIM", "LUN", "MAR", "MER", "JEU", "VEN", "SAM"];
-    let day = timestamp.getDay();
-    let date = timestamp.getDate();
-    let hour = timestamp.getHours();
-    let minute = timestamp.getMinutes();
-
-    let myDate = days[day] + ' ' + date + ', ' + hour + ':' + minute;
-
-    chatTime.textContent = myDate;
-
-    if (msg.sender === username) {
-        chatRow.classList.add('chat-user');
-    } else if (msg.sender === 'Admin') {
-        chatRow.classList.add('admin');
-    } else {
-        chatRow.classList.add('external-chat-user');
-    }
-
-    chatRow.appendChild(chatSender);
-    chatRow.appendChild(chatBubble);
-    chatRow.appendChild(chatTime);
-    chat.appendChild(chatRow);
-};
+/*******************************************************
+CHANGE LANGUAGE FRENCH-ENGLISH 
+********************************************************/
 
 async function changeLang(lang) {
     document.documentElement.lang = lang;
@@ -60,19 +22,9 @@ async function switchLang() {
     }
 };
 
-function renderLang() {
-    let language = document.getElementById("language");
-    language.onclick = async function () {
-        await switchLang();
-    };
-};
-
-function getUserName() {
-    let username = prompt('Please enter your username');
-    if (username != null) {
-        return username;
-    }
-}
+/*******************************************************
+CHANGE USERNAME WHILE NAVIGATING ON THE APP
+********************************************************/
 
 function changeUserName(connection) {
     let user = document.getElementById('user');
@@ -82,10 +34,85 @@ function changeUserName(connection) {
     }
 }
 
-function initializeUsername(username) {
+function getUserName() {
+    let username = prompt('Please enter your username');
+    if (username != null) {
+        return username;
+    }
+}
+
+/*******************************************************
+VIEW
+********************************************************/
+
+function renderUsername(username) {
     let user = document.getElementById('username');
     user.textContent = username;
 }
+
+function renderLang() {
+    let language = document.getElementById("language");
+    language.onclick = async function () {
+        await switchLang();
+    };
+};
+
+function formatTime(time) {
+    let timestamp = new Date(time);
+    let days = ["DIM", "LUN", "MAR", "MER", "JEU", "VEN", "SAM"];
+    let day = timestamp.getDay();
+    let date = timestamp.getDate();
+    let hour = timestamp.getHours();
+    let minute = timestamp.getMinutes();
+    let myDate = days[day] + ' ' + date + ', ' + hour + ':' + minute;
+    return myDate;
+};
+
+function setMessagePosition(chatRow, sender, username) {
+    if (sender === username) {
+        chatRow.classList.add('chat-user');
+    } else if (sender === 'Admin') {
+        chatRow.classList.add('admin');
+    } else {
+        chatRow.classList.add('external-chat-user');
+    }
+}
+
+function setMessageType(chatBubble, sender) {
+    if (sender === 'Admin') {
+        chatBubble.classList.add('chat-admin')
+    } else {
+        chatBubble.classList.add('chat-bubble');        
+    }
+}
+
+function renderChatBubbles(msg, username) {
+    let chat = document.getElementById('chat');
+
+    let chatRow = document.createElement('div');
+    chatRow.classList.add('chat-row');
+    setMessagePosition(chatRow, msg.sender, username);
+
+    let chatBubble = document.createElement('div');
+    setMessageType(chatBubble, msg.sender);
+    chatBubble.textContent = msg.data;
+
+    let chatSender = document.createElement('div');
+    chatSender.textContent = msg.sender;
+
+    let chatTime = document.createElement('div');
+    let myDate = formatTime(msg.timestamp);
+    chatTime.textContent = myDate;
+
+    chatRow.appendChild(chatSender);
+    chatRow.appendChild(chatBubble);
+    chatRow.appendChild(chatTime);
+    chat.appendChild(chatRow);
+};
+
+/*******************************************************
+REFRESH PAGE
+********************************************************/
 
 function refresh() {
     let logo = document.getElementById('logo');
@@ -93,6 +120,10 @@ function refresh() {
         location.reload();
     }
 }
+
+/*******************************************************
+PAGE INITIALIZATIONS
+********************************************************/
 
 function initSocket(username) {
     let url = 'ws://log2420-nginx.info.polymtl.ca/chatservice?username=';
@@ -107,7 +138,7 @@ function initSocket(username) {
 
 async function init() {
     let username = await getUserName();
-    initializeUsername(username);
+    renderUsername(username);
     initSocket(username);
 }
 
