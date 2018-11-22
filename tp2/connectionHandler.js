@@ -10,7 +10,7 @@ class ConnectionHandler extends Observer {
 
     connect() {
         this.ws.onopen = () => {
-            this.ws.onmessage = (e) => {
+            this.ws.onmessage = (event) => {
                 let msg = JSON.parse(event.data);
                 this.notifyObserver(msg);
             }

@@ -3,25 +3,27 @@ class MessageObserver {
         this.observable = observable;
         this.input = '';
         this.channel = channel;
-        this.viewSendMessage();
         this.messages = [];
         this.username = username;
+        this.viewSendMessage();
     }
-    /**
-     * 
-     * @param {Message} message 
-     */
+
     addEvent(msg) {
         if (msg.eventType === "onMessage") {
             if (this.channel === msg.channelId) {
                 renderChatBubbles(msg, this.username);
             }
+            console.log(msg);
         } else if (msg.eventType === "onGetChannel") {
             this.loadPreviousMessage(msg, this.username);
-            this.channel = msg.channelId;
+            this.setChannel(msg.channelId);
         } else if (msg.eventType === "onJoinChannel" || msg.eventType === "onLeaveChannel") {
             renderChatBubbles(msg, this.username);
         }
+    }
+
+    setChannel(id) {
+        this.channel = id;
     }
 
     loadPreviousMessage(messages) {
@@ -45,8 +47,10 @@ class MessageObserver {
 
     viewSendMessage() {
         let sendButton = document.getElementById('send');
+        let input = document.getElementById('textbox');
+
         sendButton.onclick = function () {
-            this.input = document.getElementById('textbox').value;
+            this.input = input.value;
             this.sendMessage(this.input);
             document.getElementById('textbox').value = '';
             this.input = '';

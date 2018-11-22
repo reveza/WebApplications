@@ -82,7 +82,7 @@ function setMessageType(chatBubble, sender) {
     if (sender === 'Admin') {
         chatBubble.classList.add('chat-admin')
     } else {
-        chatBubble.classList.add('chat-bubble');        
+        chatBubble.classList.add('chat-bubble');
     }
 }
 
@@ -116,10 +116,27 @@ REFRESH PAGE
 
 function refresh() {
     let logo = document.getElementById('logo');
-    logo.onclick = function () {
+    logo.onclick = function() {
         location.reload();
     }
 }
+
+/*******************************************************
+SEND MSG BY PRESSING ENTER
+********************************************************/
+
+function pressEnter() {
+    let input = document.getElementById('textbox');
+    input.addEventListener("keyup", function(event) {
+        // Cancel the default action, if needed
+        event.preventDefault();
+        if (event.keyCode === 13) {
+            // Trigger the button element with a click
+            document.getElementById("send").click();
+        }
+    });
+}
+
 
 /*******************************************************
 PAGE INITIALIZATIONS
@@ -144,6 +161,7 @@ async function init() {
 
 window.onload = async () => {
     refresh();
+    pressEnter();
     init();
     await changeLang("fr");
     renderLang();
