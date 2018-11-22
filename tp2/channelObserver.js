@@ -14,6 +14,11 @@ class ChannelObserver {
         }
     }
 
+    emptyChannelList() {
+        const myChannelList = document.getElementById("chatColumn");
+        while (myChannelList.firstChild) myChannelList.removeChild(myChannelList.firstChild);
+    }
+
     updateChannelsList(msg) {
         let channelsList = document.getElementById('chatColumn');
         msg.data.map(channel => {

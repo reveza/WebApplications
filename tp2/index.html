@@ -21,11 +21,20 @@
 <body>
     <div class="navbar">
         <div><a id="logo">POLY CHAT</a></div>
-        <div>
-            <a class="icon-navbar glyphicon glyphicon-user" id="user"></a>
-            <a class="icon-navbar glyphicon glyphicon-bell"></a>
-            <a class="icon-navbar glyphicon glyphicon-globe" id="language"></a>
-            <a class="icon-navbar glyphicon glyphicon-cog"></a>
+        <div class="icon-list">
+            <div class="user" id="user">
+                <a class="icon-navbar glyphicon glyphicon-user"></a>
+                <div id="username"></div>
+            </div>
+            <div>
+                <a class="icon-navbar glyphicon glyphicon-bell"></a>
+            </div>
+            <div>
+                <a class="icon-navbar glyphicon glyphicon-globe" id="language"></a>
+            </div>
+            <div>
+                <a class="icon-navbar glyphicon glyphicon-cog"></a>
+            </div>
         </div>
     </div>
     <div>
@@ -54,7 +63,7 @@
         <div class="content">
             <div class="chat-column">
                 <div class="chat" id="chat">
-                    
+
                 </div>
                 <div>
                     <input type="text" class="textbox" id="textbox">

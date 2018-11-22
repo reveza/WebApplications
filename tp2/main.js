@@ -74,6 +74,19 @@ function getUserName() {
     }
 }
 
+function changeUserName(connection) {
+    let user = document.getElementById('user');
+    user.onclick = function() {
+        connection.close();
+        init();
+    }
+}
+
+function initializeUsername(username) {
+    let user = document.getElementById('username');
+    user.textContent = username;
+}
+
 function refresh() {
     let logo = document.getElementById('logo');
     logo.onclick = function () {
@@ -81,9 +94,7 @@ function refresh() {
     }
 }
 
-window.onload = async () => {
-    refresh();
-    let username = await getUserName();
+function initSocket(username) {
     let url = 'ws://log2420-nginx.info.polymtl.ca/chatservice?username=';
     let generalChannel = 'dbf646dc-5006-4d9f-8815-fd37514818ee';
     let connection = new ConnectionHandler(url, username, generalChannel);
@@ -91,6 +102,18 @@ window.onload = async () => {
     let message = new MessageObserver(connection, generalChannel, username);
     const observers = [channel, message];
     connection.addObservers(observers);
+    changeUserName(connection);
+}
+
+async function init() {
+    let username = await getUserName();
+    initializeUsername(username);
+    initSocket(username);
+}
+
+window.onload = async () => {
+    refresh();
+    init();
     await changeLang("fr");
     renderLang();
 }

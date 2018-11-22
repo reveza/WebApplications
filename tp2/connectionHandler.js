@@ -18,6 +18,11 @@ class ConnectionHandler extends Observer {
         }
     }
 
+    close() {
+        this.observers[0].emptyChannelList();
+        this.ws.close();
+    }
+
     loadPreviousMessage(channelId) {
         this.channelId = channelId;
         var message = new Message("onGetChannel", this.channelId, "", this.username, Date.now());
