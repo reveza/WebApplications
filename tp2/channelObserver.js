@@ -40,6 +40,8 @@ class ChannelObserver {
                 if (channel.id === "dbf646dc-5006-4d9f-8815-fd37514818ee") {
                     icon.classList = 'icon-navbar glyphicon glyphicon-star'
                     this.channelIds[channel.id] = 'active';
+                    document.getElementById('textbox').disabled = false;
+                    this.displayChannel(channel.id);
                 } else {
                     icon.classList = 'icon-navbar glyphicon glyphicon-plus'
                     this.channelIds[channel.id] = 'disabled';
@@ -70,10 +72,16 @@ class ChannelObserver {
         if (id !== this.generalChannel) {
             let icon = document.getElementById(id);
             icon.classList = 'icon-navbar glyphicon glyphicon-plus';
+            document.getElementById('textbox').disabled = true;
         }
     }
 
     displayChannel(id) {
+        if (id === "dbf646dc-5006-4d9f-8815-fd37514818ee" || this.channelIds[id] === "active") {
+            document.getElementById('textbox').disabled = false;
+        } else if (this.channelIds[id] === "disabled") {
+            document.getElementById('textbox').disabled = true;
+        }
         this.channelId = id;
         this.connectionHandler.setChannelId(id);
         this.connectionHandler.loadPreviousMessage(this.channelId);
@@ -86,6 +94,7 @@ class ChannelObserver {
         if (id !== this.generalChannel) {
             let icon = document.getElementById(id);
             icon.classList = 'icon-navbar glyphicon glyphicon-minus';
+            document.getElementById('textbox').disabled = false;
         }
     }
 

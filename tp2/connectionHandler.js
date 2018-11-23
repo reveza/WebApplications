@@ -14,7 +14,6 @@ class ConnectionHandler extends Observer {
                 let msg = JSON.parse(event.data);
                 this.notifyObserver(msg);
             }
-            this.loadPreviousMessage(this.channelId);
         }
     }
 

@@ -13,7 +13,6 @@ class MessageObserver {
             if (this.channel === msg.channelId) {
                 renderChatBubbles(msg, this.username);
             }
-            console.log(msg);
         } else if (msg.eventType === "onGetChannel") {
             this.loadPreviousMessage(msg, this.username);
             this.setChannel(msg.channelId);
@@ -30,7 +29,7 @@ class MessageObserver {
         this.emptyChatBox();
         messages.data.messages.forEach(msg => {
             renderChatBubbles(msg, this.username);
-        })
+        });
     }
 
     emptyChatBox() {
