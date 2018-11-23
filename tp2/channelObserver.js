@@ -1,6 +1,6 @@
 class ChannelObserver {
-    constructor(observable, channelId, username) {
-        this.observable = observable;
+    constructor(connectionHandler, channelId, username) {
+        this.connectionHandler = connectionHandler;
         this.channelId = channelId;
         this.channelIds = {};
         this.username = username;
@@ -65,7 +65,7 @@ class ChannelObserver {
 
     leaveChannel(id) {
         const leaveMessage = new Message("onLeaveChannel", id, "", this.username, Date.now());
-        this.observable.sendMsg(leaveMessage);
+        this.connectionHandler.sendMsg(leaveMessage);
         this.channelIds[id] = 'disabled';
         if (id !== this.generalChannel) {
             let icon = document.getElementById(id);
@@ -75,13 +75,13 @@ class ChannelObserver {
 
     displayChannel(id) {
         this.channelId = id;
-        this.observable.setChannelId(id);
-        this.observable.loadPreviousMessage(this.channelId);
+        this.connectionHandler.setChannelId(id);
+        this.connectionHandler.loadPreviousMessage(this.channelId);
     }
 
     joinChannel(id) {
         const joinnedMessage = new Message("onJoinChannel", id, "", this.username, Date.now());
-        this.observable.sendMsg(joinnedMessage);
+        this.connectionHandler.sendMsg(joinnedMessage);
         this.channelIds[id] = 'active';
         if (id !== this.generalChannel) {
             let icon = document.getElementById(id);
@@ -95,9 +95,9 @@ class ChannelObserver {
             let name = prompt('Please enter a channel name');
             if (name !== null) {
                 let createChannel = new Message("onCreateChannel", "", name, this.username, Date.now());
-                this.observable.sendMsg(createChannel);
+                this.connectionHandler.sendMsg(createChannel);
                 createChannel.eventType = "updateChannelsList";
-                this.observable.sendMsg(createChannel);
+                this.connectionHandler.sendMsg(createChannel);
             }
         }.bind(this)
     }
