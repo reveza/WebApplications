@@ -42,7 +42,7 @@ function getUserName() {
 }
 
 /*******************************************************
-VIEW
+VIEW USERNAME
 ********************************************************/
 
 function renderUsername(username) {
@@ -50,11 +50,24 @@ function renderUsername(username) {
     user.textContent = username;
 }
 
+/*******************************************************
+VIEW LANGUAGES
+********************************************************/
+
 function renderLang() {
     let language = document.getElementById("language");
     language.onclick = async function () {
         await switchLang();
     };
+};
+
+/*******************************************************
+VIEW CHATBUBBLES
+********************************************************/
+
+function emptyChatBubbles() {
+    const myChatBox = document.getElementById("chat");
+    while (myChatBox.firstChild) myChatBox.removeChild(myChatBox.firstChild);
 };
 
 function formatTime(time) {
@@ -112,6 +125,15 @@ function renderChatBubbles(msg, username) {
     chatRow.appendChild(chatBubble);
     chatRow.appendChild(chatTime);
     chat.appendChild(chatRow);
+};
+
+/*******************************************************
+VIEW CHANNEL
+********************************************************/
+
+function emptyChannelList() {
+    const myChannelList = document.getElementById("chatColumn");
+    while (myChannelList.firstChild) myChannelList.removeChild(myChannelList.firstChild);
 };
 
 /*******************************************************

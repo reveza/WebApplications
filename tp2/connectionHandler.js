@@ -18,7 +18,7 @@ class ConnectionHandler extends Observer {
     }
 
     close() {
-        this.observers[0].emptyChannelList();
+        emptyChannelList();
         this.ws.close();
     }
 

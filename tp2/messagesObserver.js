@@ -5,7 +5,7 @@ class MessageObserver {
         this.channel = channel;
         this.messages = [];
         this.username = username;
-        this.viewSendMessage();
+        this.sendMessage();
     }
 
     addEvent(msg) {
@@ -26,31 +26,26 @@ class MessageObserver {
     }
 
     loadPreviousMessage(messages) {
-        this.emptyChatBox();
+        emptyChatBubbles();
         messages.data.messages.forEach(msg => {
             renderChatBubbles(msg, this.username);
         });
     }
 
-    emptyChatBox() {
-        const myChatBox = document.getElementById("chat");
-        while (myChatBox.firstChild) myChatBox.removeChild(myChatBox.firstChild);
-    }
-
-    sendMessage(text) {
+    sendToSocket(text) {
         let date = new Date();
         let timestamp = date.getTime();
         let msg = new Message("onMessage", "", text, this.username, timestamp);
         this.connectionHandler.sendMsg(msg);
     }
 
-    viewSendMessage() {
+    sendMessage() {
         let sendButton = document.getElementById('send');
         let input = document.getElementById('textbox');
-
+    
         sendButton.onclick = function () {
             this.input = input.value;
-            this.sendMessage(this.input);
+            this.sendToSocket(this.input);
             document.getElementById('textbox').value = '';
             this.input = '';
         }.bind(this);
