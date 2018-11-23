@@ -1,6 +1,6 @@
 class MessageObserver {
-    constructor(observable, channel, username) {
-        this.observable = observable;
+    constructor(connectionHandler, channel, username) {
+        this.connectionHandler = connectionHandler;
         this.input = '';
         this.channel = channel;
         this.messages = [];
@@ -42,7 +42,7 @@ class MessageObserver {
         let date = new Date();
         let timestamp = date.getTime();
         let msg = new Message("onMessage", "", text, this.username, timestamp);
-        this.observable.sendMsg(msg);
+        this.connectionHandler.sendMsg(msg);
     }
 
     viewSendMessage() {

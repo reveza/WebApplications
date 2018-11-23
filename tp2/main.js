@@ -78,11 +78,13 @@ function setMessagePosition(chatRow, sender, username) {
     }
 }
 
-function setMessageType(chatBubble, sender) {
+function setMessageType(chatBubble, sender, username) {
     if (sender === 'Admin') {
         chatBubble.classList.add('chat-admin')
+    } else if (sender === username){
+        chatBubble.classList.add('chat-bubble-user');
     } else {
-        chatBubble.classList.add('chat-bubble');
+        chatBubble.classList.add('chat-bubble-external');
     }
 }
 
@@ -94,14 +96,16 @@ function renderChatBubbles(msg, username) {
     setMessagePosition(chatRow, msg.sender, username);
 
     let chatBubble = document.createElement('div');
-    setMessageType(chatBubble, msg.sender);
+    setMessageType(chatBubble, msg.sender, username);
     chatBubble.textContent = msg.data;
 
     let chatSender = document.createElement('div');
     chatSender.textContent = msg.sender;
+    chatSender.classList.add('grey-text');
 
     let chatTime = document.createElement('div');
     let myDate = formatTime(msg.timestamp);
+    chatTime.classList.add('date');
     chatTime.textContent = myDate;
 
     chatRow.appendChild(chatSender);
