@@ -12,7 +12,7 @@ class ConnectionHandler extends Observer {
         this.ws.onopen = () => {
             this.ws.onmessage = (event) => {
                 let msg = JSON.parse(event.data);
-                this.notifyObserver(msg);
+                this.alertObserver(msg);
             }
         }
     }
@@ -34,14 +34,15 @@ class ConnectionHandler extends Observer {
         });
     }
 
-    notifyObserver(msg) {
+    alertObserver(msg) {
         this.observers.map(observer => {
             observer.addEvent(msg);
         })
     }
 
     sendMsg(msg) {
-        if (msg.channelId === "") {
+        let isChannelEmpty = msg.channelId === "";
+        if (isChannelEmpty) {
             msg.channelId = this.channelId;
         }
         this.ws.send(JSON.stringify(msg));

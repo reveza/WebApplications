@@ -4,6 +4,5 @@ class Observer {
     }
 
     addObservers() {}
-
-    notifyObserver() {}
+    alertObserver() {}
 }

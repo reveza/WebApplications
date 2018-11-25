@@ -154,10 +154,8 @@ SEND MSG BY PRESSING ENTER
 function pressEnter() {
     let input = document.getElementById('textbox');
     input.addEventListener("keyup", function(event) {
-        // Cancel the default action, if needed
         event.preventDefault();
         if (event.keyCode === 13) {
-            // Trigger the button element with a click
             document.getElementById("send").click();
         }
     });

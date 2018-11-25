@@ -38,7 +38,7 @@ class ChannelObserver {
     }
 
     displayChannel(id) {
-        if (id === "dbf646dc-5006-4d9f-8815-fd37514818ee" || this.channelIds[id] === "active") {
+        if (id === this.generalChannel || this.channelIds[id] === "active") {
             document.getElementById('textbox').disabled = false;
         } else if (this.channelIds[id] === "disabled") {
             document.getElementById('textbox').disabled = true;
@@ -96,7 +96,7 @@ class ChannelObserver {
     renderChannelIcons(id) {
         let icon = document.createElement('a');
         icon.id = id;
-        if (id === "dbf646dc-5006-4d9f-8815-fd37514818ee") {
+        if (id === this.generalChannel) {
             icon.classList = 'icon-navbar glyphicon glyphicon-star'
             this.setChannelStatus(id, 'active');
             document.getElementById('textbox').disabled = false;
